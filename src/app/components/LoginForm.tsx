@@ -2,22 +2,30 @@
 
 import React from "react";
 import {signIn} from 'next-auth/react'
+import { useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
 
-    async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault()
-        const formData = new FormData(e.currentTarget)
+    const searchParams = useSearchParams();
 
+    const error = searchParams.get('error')
+
+    async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+    
         const data = {
             email: formData.get("email"),
             password: formData.get("password")
-        }
-
-        signIn("credentials", {
+        };
+    
+        await signIn("credentials", {
+            email: data.email,
+            password: data.password,
             callbackUrl: "/dashboard",
-        })
+        });
     }
+    
 
     return (
         <form className="w-full max-w-md flex flex-col" onSubmit={handleLogin}>
@@ -43,6 +51,7 @@ export default function LoginForm() {
           >
             Login
           </button>
+          {error === 'CredentialsSignin' && <div className="text-red-500">Erro no login</div>}
         </form>
     )
 }

@@ -1,18 +1,33 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+import { signIn } from "next-auth/react"
 
 const handler = NextAuth({
+    pages: {
+        signIn: '/',
+    },
   providers: [
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        email: { label: "Email", type: "email"},
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        console.log(credentials);
-        return null
-      }
+        if(!credentials) {
+            return null;
+        }
+    
+        if (credentials.email === "zidas123@gmail.com" && credentials.password === '123456') {
+            return {
+                id: '1',
+                name: 'Zidas',
+                email: 'zidas123@gmail.com'
+            }
+        }
+    
+        return null; // <---- IMPORTANTE!
+    }    
     })
   ]
 })
