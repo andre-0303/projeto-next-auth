@@ -1,5 +1,8 @@
-import { supabase } from "@/lib/supabase"; 
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { supabase } from "@/lib/supabase"
+import bcrypt from "bcryptjs"
+import { NextRequest } from "next/server"
 
 const handler = NextAuth({
   providers: [
@@ -7,28 +10,30 @@ const handler = NextAuth({
       name: 'Credentials',
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        if (!credentials) {
+        if (!credentials?.email || !credentials?.password) {
           return null;
         }
 
-        const { email, password } = credentials;
-
+        // Buscar o usuário no Supabase
         const { data: user, error } = await supabase
           .from('users')
           .select('*')
-          .eq('email', email)
+          .eq('email', credentials.email)
           .single();
 
         if (error || !user) {
-          console.log('Usuário não encontrado');
+          console.log("Usuário não encontrado", error);
           return null;
         }
 
-        if (user.password !== password) {
-          console.log('Senha inválida');
+        // Comparar senha
+        const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
+
+        if (!isPasswordCorrect) {
+          console.log("Senha incorreta");
           return null;
         }
 
@@ -41,6 +46,10 @@ const handler = NextAuth({
     })
   ],
   pages: {
-    signIn: '/'
-  }
+    signIn: '/',
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 });
+
+// 👇 Aqui é onde o erro estava — exportar GET e POST corretamente para o Next.js
+export { handler as GET, handler as POST };
