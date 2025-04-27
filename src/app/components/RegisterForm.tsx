@@ -66,7 +66,7 @@ export default function RegisterForm() {
 
       <button
         type="submit"
-        className="bg-green-600 hover:bg-green-700 transition-colors text-white font-semibold py-3 rounded cursor-pointer"
+        className="bg-[#007dfe] hover:bg-blue-700 transition-colors text-white font-semibold py-3 rounded cursor-pointer"
       >
         Cadastrar
       </button>
