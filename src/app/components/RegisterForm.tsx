@@ -12,7 +12,6 @@ export default function RegisterForm() {
   const [error, setError] = useState<string | null>(null);
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
   const [loading, setLoading] = useState(false);
 
   async function handleRegister(e: React.FormEvent<HTMLFormElement>) {
@@ -20,7 +19,6 @@ export default function RegisterForm() {
     setLoading(true); // Inicia o carregamento
 
     const formData = new FormData(e.currentTarget);
-
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const name = formData.get("name") as string;
@@ -66,20 +64,20 @@ export default function RegisterForm() {
   }
 
   return (
-    <form className="w-full max-w-md flex flex-col" onSubmit={handleRegister}>
-      <h1 className="font-bold text-3xl mb-6 text-center">Cadastro</h1>
+    <form className="w-full max-w-md flex flex-col p-8 bg-white rounded-lg shadow-lg" onSubmit={handleRegister}>
+      <h1 className="font-bold text-3xl mb-6 text-center text-gray-800">Cadastro</h1>
 
       <input
         name="name"
         type="text"
-        className="p-3 mb-4 border border-gray-300 rounded bg-gray-200"
+        className="p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Digite seu nome"
       />
 
       <input
         name="email"
         type="email"
-        className="p-3 mb-4 border border-gray-300 rounded bg-gray-200"
+        className="p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Digite seu email"
       />
 
@@ -89,7 +87,7 @@ export default function RegisterForm() {
           type={showPassword ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="p-3 mb-4 w-full border border-gray-300 rounded bg-gray-200"
+          className="p-3 mb-4 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Digite sua senha"
         />
         <button
@@ -103,7 +101,7 @@ export default function RegisterForm() {
 
       <button
         type="submit"
-        className="bg-[#007dfe] hover:bg-blue-700 transition-colors text-white font-semibold py-3 rounded cursor-pointer"
+        className="bg-blue-600 hover:bg-blue-700 transition-colors text-white font-semibold py-3 rounded-lg cursor-pointer shadow-lg hover:shadow-xl focus:outline-none"
         disabled={loading}
       >
         {loading ? "Cadastrando..." : "Cadastrar"}
@@ -111,8 +109,11 @@ export default function RegisterForm() {
 
       {error && <div className="text-red-500 mt-4">{error}</div>}
 
-      <div className="text-center mt-4">
-        Já tem conta? <Link href="/" className="text-blue-600 underline">Fazer login</Link>
+      <div className="text-center mt-6">
+        Já tem conta?{" "}
+        <Link href="/" className="text-blue-600 hover:underline font-semibold">
+          Fazer login
+        </Link>
       </div>
     </form>
   );
