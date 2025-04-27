@@ -5,13 +5,20 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Link from "next/link";
 import bcrypt from 'bcryptjs';
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // ícones para mostrar/ocultar a senha
 
 export default function RegisterForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const [loading, setLoading] = useState(false);
 
   async function handleRegister(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setLoading(true); // Inicia o carregamento
+
     const formData = new FormData(e.currentTarget);
 
     const email = formData.get("email") as string;
@@ -20,10 +27,24 @@ export default function RegisterForm() {
 
     if (!email || !password || !name) {
       setError("Preencha todos os campos.");
+      setLoading(false);
       return;
     }
 
-    // gerar hash da senha
+    // Validação simples de e-mail e senha
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("E-mail inválido.");
+      setLoading(false);
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("A senha deve ter pelo menos 8 caracteres.");
+      setLoading(false);
+      return;
+    }
+
+    // Gerar hash da senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const { data, error } = await supabase.from('users').insert([
@@ -33,10 +54,15 @@ export default function RegisterForm() {
     if (error) {
       console.log(error);
       setError('Erro ao cadastrar.');
+      setLoading(false);
       return;
     }
 
-    router.push('/'); // depois de cadastrar, vai pro login
+    // Limpar campos e redirecionar após o sucesso
+    setPassword("");
+    setError(null);
+    router.push('/'); // Depois de cadastrar, vai para o login
+    setLoading(false);
   }
 
   return (
@@ -57,18 +83,30 @@ export default function RegisterForm() {
         placeholder="Digite seu email"
       />
 
-      <input
-        name="password"
-        type="password"
-        className="p-3 mb-6 border border-gray-300 rounded bg-gray-200"
-        placeholder="Digite sua senha"
-      />
+      <div className="relative mb-6">
+        <input
+          name="password"
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="p-3 mb-4 w-full border border-gray-300 rounded bg-gray-200"
+          placeholder="Digite sua senha"
+        />
+        <button
+          type="button"
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </button>
+      </div>
 
       <button
         type="submit"
         className="bg-[#007dfe] hover:bg-blue-700 transition-colors text-white font-semibold py-3 rounded cursor-pointer"
+        disabled={loading}
       >
-        Cadastrar
+        {loading ? "Cadastrando..." : "Cadastrar"}
       </button>
 
       {error && <div className="text-red-500 mt-4">{error}</div>}
