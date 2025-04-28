@@ -1,4 +1,4 @@
-# Next.js Auth App
+# Projeto Login e Cadastro NextAuth - Supabase
 
 > **Projeto de autenticação** usando Next.js 13 (App Router), NextAuth, Supabase, e Tailwind CSS. Fornece login por **credenciais**, **Google** e **GitHub**, além de cadastro de usuários.
 
