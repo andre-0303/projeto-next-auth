@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Link from "next/link";
 import bcrypt from 'bcryptjs';
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // ícones para mostrar/ocultar a senha
+import { FaEye, FaEyeSlash } from "react-icons/fa"; 
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function RegisterForm() {
 
   async function handleRegister(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setLoading(true); // Inicia o carregamento
+    setLoading(true); 
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
@@ -29,7 +29,6 @@ export default function RegisterForm() {
       return;
     }
 
-    // Validação simples de e-mail e senha
     if (!/\S+@\S+\.\S+/.test(email)) {
       setError("E-mail inválido.");
       setLoading(false);
@@ -42,7 +41,6 @@ export default function RegisterForm() {
       return;
     }
 
-    // Gerar hash da senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const { data, error } = await supabase.from('users').insert([
@@ -56,10 +54,9 @@ export default function RegisterForm() {
       return;
     }
 
-    // Limpar campos e redirecionar após o sucesso
     setPassword("");
     setError(null);
-    router.push('/'); // Depois de cadastrar, vai para o login
+    router.push('/'); 
     setLoading(false);
   }
 
